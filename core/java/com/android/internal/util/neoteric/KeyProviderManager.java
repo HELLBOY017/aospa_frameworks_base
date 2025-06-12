@@ -89,20 +89,32 @@ public final class KeyProviderManager {
                                 certCount = 0;
                                 break;
 
-                            case "PrivateKey":
+                            case "PrivateKey": {
+                                String format = p.getAttributeValue(null, "format");
+                                if (!"pem".equalsIgnoreCase(format)) {
+                                    Log.w(TAG, "Unsupported PrivateKey format: " + format);
+                                    return false;
+                                }
                                 p.next();
                                 if (currentAlg != null) {
                                     keyboxData.put(currentAlg + ".PRIV", p.getText().trim());
                                 }
                                 break;
+                            }
 
-                            case "Certificate":
+                            case "Certificate": {
+                                String format = p.getAttributeValue(null, "format");
+                                if (!"pem".equalsIgnoreCase(format)) {
+                                    Log.w(TAG, "Unsupported Certificate format: " + format);
+                                    return false;
+                                }
                                 if (currentAlg != null && certCount < 3) {
                                     p.next();
                                     certCount++;
                                     keyboxData.put(currentAlg + ".CERT_" + certCount, p.getText().trim());
                                 }
                                 break;
+                            }
                         }
                     }
                 }
